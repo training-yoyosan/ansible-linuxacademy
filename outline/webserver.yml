@@ -1,0 +1,25 @@
+--- # Outline to Playbook translation
+- hosts: apacheweb
+  become: true
+  become_user: test
+  connection: ssh
+  gather_facts: no
+  tasks:
+    - name: date/time stamp for when the playbook starts
+      raw: /usr/bin/date > /home/test/playbook_start.log
+    - name: install the apache web server
+      yum: pkg=httpd state=latest
+    - name: start web service
+      service: name=httpd state=restarted
+    - name: verify that the web service is running
+      command: systemctl status httpd
+      register: result
+    - debug: var=result
+    - name: install client software - telnet & lynx
+      yum: pkg=telnet state=latest
+      yum: pkg=lynx state=latest
+    - name: log all packages installed on the system
+      raw: yum list installed > /home/test/installed.log
+    - name: date/time stamp when the playbook ends
+      raw: /usr/bin/date > /home/test/playbook_end.log
+
