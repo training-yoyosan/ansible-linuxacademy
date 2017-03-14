@@ -1,0 +1,8 @@
+[local]
+localhost
+
+[apacheweb]
+mpalade2.mylabserver.com
+
+[appserver]
+mpalade3.mylabserver.com

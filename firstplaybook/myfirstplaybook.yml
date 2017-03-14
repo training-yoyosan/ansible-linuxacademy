@@ -1,0 +1,13 @@
+--- # My First YAML playbook for Ansible.
+- hosts: apacheweb
+  become: test
+  connection: ssh
+  gather_facts: no
+  vars:
+    playbook_version: 0.1b
+    vars_files:
+      - conf/copyright.yml
+      - conf/webdefaults.yml
+    vars_prompt:
+      - name: web_domain
+        prompt: Web Domain
