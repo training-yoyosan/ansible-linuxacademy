@@ -1,2 +1,3 @@
 apache_version: 2.6
 apache_mod_required: mod_ssl
+pkg_lynx: lynx
