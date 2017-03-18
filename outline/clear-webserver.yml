@@ -1,0 +1,12 @@
+--- # Outline to Playbook translation
+- hosts: all
+  user: test
+  become: true
+  connection: ssh
+  gather_facts: no
+  tasks:
+    
+    - name: remove installed packages
+      yum: pkg=httpd,lynx,telnet state=removed
+      async: 300
+      poll: 3

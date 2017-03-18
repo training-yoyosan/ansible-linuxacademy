@@ -1,5 +1,5 @@
 --- # Outline to Playbook translation
-- hosts: apacheweb
+- hosts: all
   user: test
   become: true
   connection: ssh
@@ -12,6 +12,8 @@
     
     - name: install the apache web server
       yum: pkg=httpd state=latest
+      async: 300
+      poll: 3
       notify: "start httpd"
     
     - meta: flush_handlers
