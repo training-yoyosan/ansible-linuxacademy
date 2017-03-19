@@ -5,7 +5,6 @@
   connection: ssh
   gather_facts: no
   tasks:
-    
     - name: remove installed packages
       yum: pkg=httpd,lynx,telnet state=removed
       async: 300
