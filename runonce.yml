@@ -1,0 +1,17 @@
+--- # Runonce playbook example
+- hosts: all
+  user: test
+  become: true
+  connection: ssh
+  gather_facts: no
+  tasks:
+    - name: Run the uption command on all hosts and log it
+      command: /usr/bin/uptime
+      register: server_uptime
+    - debug: var=server_uptime
+
+    - name: List the contents of var
+      command: ls -lah /var
+      register: var_contents
+      run_once: true
+    - debug: var=var_contents
