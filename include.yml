@@ -1,0 +1,12 @@
+--- # FUll include task example
+- hosts: apacheweb
+  user: test
+  become: yes
+  connection: ssh
+  gather_facts: no
+  tasks:
+    - include: plays/packages.yml
+    - name: Verify telnet is installed
+      command: yum list installed | grep telnet
+      register: result
+    - debug: var=result
