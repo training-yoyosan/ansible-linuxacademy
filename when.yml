@@ -1,0 +1,15 @@
+--- # WHEN playbook example
+- hosts: apacheweb, debian
+  user: test
+  become: true
+  connection: ssh
+  gather_facts: yes
+  vars:
+    playbook_type: conditional_example
+  tasks:
+    - name: Install Apache on Debian.
+      command: apt-get install -y apache2
+      when: ansible_os_family == 'Debian'
+    - name: Install Apache on RedHat.
+      command: yum install -y httpd
+      when: ansible_os_family == 'RedHat'
