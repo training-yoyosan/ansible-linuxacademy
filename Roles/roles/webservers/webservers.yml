@@ -1,8 +1,0 @@
---- # Master playbook for web servers.
-- hosts: apacheweb
-  user: test
-  become: yes
-  connection: ssh
-  gather_facts: yes
-  roles:
-    - webservers

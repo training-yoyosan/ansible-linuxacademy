@@ -1,2 +1,4 @@
-- name: Restart HTTPD
-  service: name=httpd state=restarted
+- name: Restart HTTPD RedHat
+  service: name={{ redhat_apache }} state=restarted
+- name: Restart HTTPD Debian
+  service: name={{ debian_apache }} state=restarted
