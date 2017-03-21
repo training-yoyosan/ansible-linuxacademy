@@ -9,7 +9,6 @@
       raw: date > /home/test/role-start.log
   roles:
     - { role: redhat-webservers, when: "ansible_os_family == 'RedHat'" }
-    - { role: debian-webservers, when: "ansible_os_family == 'Debian'" }
   post_tasks:
     - name: ROLE end
       raw: date > /home/test/role-end.log
