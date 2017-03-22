@@ -1,0 +1,24 @@
+--- # Playbook for installa a NFS server
+- hosts: appserver
+  user: test
+  become: yes
+  connection: ssh
+  gather_facts: yes
+
+  vars:
+    distribution: {{ ansible_os_family }}
+    nfsutils_pkg: nfs-utils
+    nfsutilslib_pkg: nfs-utils-lib
+    nfsserver_service: nfs-server
+    nfslock_service: nfs-lock
+    nfsmap_service: nfs-idmap
+    rcpbind_service: rcpbind
+    export_path: /var/share
+    client_path: /mnt/remote
+
+  tasks:
+    - name: Install all the NFS server packages
+      yum: pkg={{ item }} state=latest
+      with_items:
+        - {{ nfsutils_pkg }}
+        - {{ nfsutilslib_pkg }}
