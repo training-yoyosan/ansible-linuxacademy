@@ -1,0 +1,7 @@
+- name: Start HTTPD
+  service: name={{ apache_pkg }} state=started
+- name: Test HTTPD
+  shell: curl http://{{ apache_fqdn }}
+  register: result
+- name: Display Result
+  debug: var=result
