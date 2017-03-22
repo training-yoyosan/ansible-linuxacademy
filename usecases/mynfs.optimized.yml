@@ -1,0 +1,66 @@
+--- # Playbook for setting up a NFS server
+- hosts: appserver
+  user: test
+  become: yes
+  connection: ssh
+  gather_facts: yes
+
+  vars:
+    distribution: "{{ ansible_os_family }}"
+    nfsutils_pkg: nfs-utils
+    nfsutilslib_pkg: libnfs-utils
+    nfsserver_service: nfs-server
+    nfslock_service: nfs-lock
+    nfsmap_service: nfs-idmap
+    rpcbind_service: rpcbind
+    export_path: /var/share
+    client_path: /mnt/remote
+    client_server: mpalade2.mylabserver.com
+
+  tasks:
+    - name: Install server needed packages.
+      yum: pkg={{ item }} state=latest
+      with_items:
+        - "{{ nfsutils_pkg }}"
+        - "{{ nfsutilslib_pkg }}"
+    - name: Copy the export file to the remote server.
+      copy: src=files/exports.template dest=/etc/exports owner=root group=root mode=644
+      notify:
+        - StartServerServices
+        - InstallClientPackages
+        - CreateClientMount
+        - ClientMountServerResource
+        - TestServerAvailability
+
+  handlers:
+    - name: StartServerServices
+      service: name={{ item }} state=restarted
+      with_items:
+        - "{{ nfsserver_service }}"
+        - "{{ nfslock_service }}"
+        - "{{ nfsmap_service }}"
+        - "{{ rpcbind_service }}"
+    - name: InstallClientPackages
+      yum: pkg={{ item }} state=latest
+      delegate_to: "{{ client_server }}"
+      with_items:
+        - "{{ nfsutils_pkg }}"
+        - "{{ nfsutilslib_pkg }}"
+      notify: StartClientServices
+    - name: StartClientServices
+      service: name={{ item }} state=restarted
+      with_items:
+        - "{{ nfslock_service }}"
+        - "{{ nfsmap_service }}"
+        - "{{ rpcbind_service }}"
+      delegate_to: "{{ client_server }}"
+    - name: CreateClientMount
+      file: path={{ client_path }} state=directory mode=755
+      delegate_to: "{{ client_server }}"
+    - name: ClientMountServerResource
+      shell: mount -t nfs mpalade3.mylabserver.com:{{ export_path }} {{ client_path }}
+      register: result
+      delegate_to: "{{ client_server }}"
+    - name: TestServerAvailability
+      debug: var=result
+
