@@ -1,5 +1,4 @@
 --- # Build an Apache webserver
-
 - hosts: apacheweb
   user: test
   become: yes
@@ -30,11 +29,12 @@
         - Start HTTPD
         - Test HTTPD
         - Display Result
+
   handlers:
     - name: Start HTTPD
       service: name={{ apache_pkg }} state=started
     - name: Test HTTPD
       shell: curl http://{{ apache_fqdn }}
       register: result
-    - name: Display result
+    - name: Display Result
       debug: var=result
