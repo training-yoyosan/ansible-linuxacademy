@@ -1,0 +1,7 @@
+- name: StartServerServices
+  service: name={{ item }} state=restarted
+  with_items:
+    - "{{ nfsserver_service }}"
+    - "{{ nfslock_service }}"
+    - "{{ nfsmap_service }}"
+    - "{{ rpcbind_service }}"

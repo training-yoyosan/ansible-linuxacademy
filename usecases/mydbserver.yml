@@ -1,0 +1,39 @@
+--- # Playbook for setting up the DB server
+- hosts: appserver
+  user: test
+  become: yes
+  connection: ssh
+  gather_facts: yes
+
+  vars:
+    dbserver_pkg: mariadb-server
+    dbclient_pkg: mariadb
+    dbserver_fqdn: mpalade3.mylabserver.com
+    dbinstalldir: /var/lib
+    dbinstancename: MyDBTest
+    dbdistribution: "{{ ansible_os_family }}"
+    dbversion: 5.5.52
+
+  tasks:
+    - name: Install the needed packages.
+      yum: pkg={{ item }} state=latest
+      with_items:
+        - "{{ dbserver_pkg }}"
+        - "{{ dbclient_pkg }}"
+    - pause: prompt="Please run the mysql_secure_installation utility and then press Enter to continue!"
+    - name: Start the DB service
+      service: name={{ dbclient_pkg }} state=started
+    - name: Copy the remote database backup in order to restore it.
+      copy: src=files/mysqlbkup.sql dest={{ dbinstalldir }}/mysqlbkup.sql owner=root group=root mode=755
+    - name: Create the remote DB instance.
+      shell: mysqladmin -u root -ppassword123 create {{ dbinstancename }}
+    - name: Import the database backup.
+      shell: mysql -uroot -ppassword123 {{ dbinstancename }} < {{ dbinstalldir }}/mysqlbkup.sql
+      register: result
+    - debug: var=result
+    - name: Add a backup cronjob to run every day at midnight.
+      cron: name="DBBackup" minute="0" hour="0" job="mysqldump -uroot -ppassword123 --databases {{ dbinstancename }} > dbbackup.sql"
+    - name: Run a quick SQL command to make sure everything was created and is working.
+      shell: mysql -uroot -ppassword123 -e 'SHOW DATABASES;'
+      register: mysqlresult
+    - debug: var=mysqlresult

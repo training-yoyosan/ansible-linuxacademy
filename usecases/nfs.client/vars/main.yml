@@ -1,0 +1,10 @@
+distribution: "{{ ansible_os_family }}"
+nfsutils_pkg: nfs-utils
+nfsutilslib_pkg: libnfs-utils
+nfsserver_service: nfs-server
+nfslock_service: nfs-lock
+nfsmap_service: nfs-idmap
+rpcbind_service: rpcbind
+export_path: /var/share
+client_path: /mnt/remote
+client_server: mpalade2.mylabserver.com
